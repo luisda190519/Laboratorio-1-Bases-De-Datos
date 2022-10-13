@@ -345,7 +345,7 @@ const createData = async function (url, global, daily, type, query) {
 const start = async function () {
   result = await fetch(
     "http://localhost:3000/filter" ||
-      "https://laboratorio-bases-de-datos.herokuapp.com/filter"
+      "https://laboratorio1basesdedatos.azurewebsites.net/filter"
   );
   dataFetched = await result.json();
   console.log(dataFetched);
@@ -353,7 +353,7 @@ const start = async function () {
   if (dataFetched.label === "deaths") {
     await createData(
       "http://localhost:3000/deaths/data/deathStatics" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/deaths/data/deathStatics",
+        "https://laboratorio1basesdedatos.azurewebsites.net/deaths/data/deathStatics",
       "totalDeaths",
       "newDeaths",
       "deaths",
@@ -362,7 +362,7 @@ const start = async function () {
   } else if (dataFetched.label === "cases") {
     await createData(
       "http://localhost:3000/cases/data/casesStatics" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/cases/data/casesStatics",
+        "https://laboratorio1basesdedatos.azurewebsites.net/cases/data/casesStatics",
       "totalCases",
       "newCases",
       "cases",
@@ -371,7 +371,7 @@ const start = async function () {
   } else if (dataFetched.label === "tests") {
     await createData(
       "http://localhost:3000/tests/data/testStatics" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/tests/data/testStatics",
+        "https://laboratorio1basesdedatos.azurewebsites.net/tests/data/testStatics",
       "totalTest",
       "newTest",
       "tests",
@@ -380,7 +380,7 @@ const start = async function () {
   } else if (dataFetched.label === "vaccinations") {
     await createData(
       "http://localhost:3000/vaccinations/data/vaccinationsStatics" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/vaccinations/data/vaccinationsStatics",
+        "https://laboratorio1basesdedatos.azurewebsites.net/vaccinations/data/vaccinationsStatics",
       "totalVaccinations",
       "newVaccinations",
       "vaccinations",

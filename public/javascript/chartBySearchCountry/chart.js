@@ -114,14 +114,14 @@ const createData = async function (url, global, daily, type) {
 const start = async function () {
   result = await fetch(
     "http://localhost:3000/filter" ||
-      "https://laboratorio-bases-de-datos.herokuapp.com/filter"
+      "https://laboratorio1basesdedatos.azurewebsites.net/filter"
   );
   dataFetched = await result.json();
 
   if (dataFetched.label === "deaths") {
     await createData(
       "http://localhost:3000/deaths/data/deathStaticsByCountry" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/deaths/data/deathStaticsByCountry",
+        "https://laboratorio1basesdedatos.azurewebsites.net/deaths/data/deathStaticsByCountry",
       "totalDeaths",
       "newDeaths",
       "deaths"
@@ -129,7 +129,7 @@ const start = async function () {
   } else if (dataFetched.label === "cases") {
     await createData(
       "http://localhost:3000/cases/data/casesStaticsByCountry" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/cases/data/casesStaticsByCountry",
+        "https://laboratorio1basesdedatos.azurewebsites.net/cases/data/casesStaticsByCountry",
       "totalCases",
       "newCases",
       "cases"
@@ -137,7 +137,7 @@ const start = async function () {
   } else if (dataFetched.label === "tests") {
     await createData(
       "http://localhost:3000/tests/data/testsStaticsByCountry" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/tests/data/testsStaticsByCountry",
+        "https://laboratorio1basesdedatos.azurewebsites.net/tests/data/testsStaticsByCountry",
       "totalTest",
       "newTest",
       "tests"
@@ -145,7 +145,7 @@ const start = async function () {
   } else if (dataFetched.label === "vaccinations") {
     await createData(
       "http://localhost:3000/vaccinations/data/vaccinationsStaticsByCountry" ||
-        "https://laboratorio-bases-de-datos.herokuapp.com/vaccinations/data/vaccinationsStaticsByCountry",
+        "https://laboratorio1basesdedatos.azurewebsites.net/vaccinations/data/vaccinationsStaticsByCountry",
       "totalVaccinations",
       "newVaccinations",
       "vaccinations"
