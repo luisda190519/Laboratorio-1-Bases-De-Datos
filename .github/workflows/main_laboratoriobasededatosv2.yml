@@ -52,5 +52,5 @@ jobs:
         with:
           app-name: 'LaboratorioBaseDeDatosV2'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_88CA4363A96D4AE0817939D11C347661 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D8B6D48CC12546709A658B1638E26CD5 }}
           package: .
