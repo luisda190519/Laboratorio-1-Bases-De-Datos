@@ -4,13 +4,6 @@ let data = {
   new: [],
 };
 
-const randomColor = function () {
-  r = Math.floor(Math.random() * 256);
-  g = Math.floor(Math.random() * 256);
-  b = Math.floor(Math.random() * 256);
-  return "rgb(" + r + ", " + g + ", " + b + ")";
-};
-
 const clearAll = async function () {
   data = {
     total: [],
@@ -47,8 +40,8 @@ const createTotalData = function (days, global) {
     cont++;
   });
 
-  inside.borderColor = randomColor();
-  inside.borderWidth = 1;
+  inside.borderColor = "rgb(29,53,87)";
+  inside.borderWidth = 3;
   inside.radius = 0;
   inside.data = total;
   data.total.push(inside);
@@ -68,8 +61,8 @@ const createNewData = function (days, daily) {
     cont++;
   });
 
-  inside.borderColor = randomColor();
-  inside.borderWidth = 1;
+  inside.borderColor = "rgb(29,53,87)";
+  inside.borderWidth = 3;
   inside.radius = 0;
   inside.data = total;
   data.new.push(inside);
@@ -112,40 +105,40 @@ const createData = async function (url, global, daily, type) {
 };
 
 const start = async function () {
-  result = await fetch(
-    "http://localhost:3000/filter" ||
-      "https://laboratorio1basesdedatos.azurewebsites.net/filter"
-  );
+  let url = "https://laboratoriobasesdedatos.azurewebsites.net";
+  try {
+    result = await fetch(url + "/filter");
+  } catch (e) {
+    url = "http://localhost:3000";
+    result = await fetch(url + "/filter");
+  }
+
   dataFetched = await result.json();
 
   if (dataFetched.label === "deaths") {
     await createData(
-      "http://localhost:3000/deaths/data/deathStaticsByCountry" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/deaths/data/deathStaticsByCountry",
+      url + "/deaths/data/deathStaticsByCountry",
       "totalDeaths",
       "newDeaths",
       "deaths"
     );
   } else if (dataFetched.label === "cases") {
     await createData(
-      "http://localhost:3000/cases/data/casesStaticsByCountry" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/cases/data/casesStaticsByCountry",
+      url + "/cases/data/casesStaticsByCountry",
       "totalCases",
       "newCases",
       "cases"
     );
   } else if (dataFetched.label === "tests") {
     await createData(
-      "http://localhost:3000/tests/data/testsStaticsByCountry" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/tests/data/testsStaticsByCountry",
+      url + "/tests/data/testsStaticsByCountry",
       "totalTest",
       "newTest",
       "tests"
     );
   } else if (dataFetched.label === "vaccinations") {
     await createData(
-      "http://localhost:3000/vaccinations/data/vaccinationsStaticsByCountry" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/vaccinations/data/vaccinationsStaticsByCountry",
+      url + "/vaccinations/data/vaccinationsStaticsByCountry",
       "totalVaccinations",
       "newVaccinations",
       "vaccinations"

@@ -11,6 +11,8 @@ let data = {
   continentTotal: [],
   newContinent: [],
   totalContinent: [],
+  countryBarRace: {},
+  continentBarRace: {},
 };
 
 const clearAll = async function () {
@@ -25,6 +27,7 @@ const clearAll = async function () {
     totalCountryDataset: [],
     continentLabels: [],
     continentTotal: [],
+    countryBarRace: [],
   };
 };
 
@@ -49,6 +52,23 @@ const isContinent = function (name) {
   return false;
 };
 
+const isValidCountry = function (name) {
+  if (
+    name === "High income" ||
+    name === "Low income" ||
+    name === "International" ||
+    name === "World" ||
+    name === "zzzzzzzzz" ||
+    name === "Lower middle income" ||
+    name === "Upper middle income" ||
+    name === "European Uninon" ||
+    name === "Europe"
+  ) {
+    return true;
+  }
+  return false;
+};
+
 const addLabels = function (days) {
   days.forEach((day) => {
     if (!data.labels.includes(day.date)) {
@@ -62,7 +82,11 @@ const addCountryLabels = function (days) {
   let labels = [];
   let last = days[0];
   days.forEach((day) => {
-    if (!(last.country == day.country) && !(last.continent === "Continent")) {
+    if (
+      !(last.country == day.country) &&
+      !(last.continent === "Continent") &&
+      !isValidCountry(last.country)
+    ) {
       data.countryLables.push(last.country);
       data.isoCodeLabels.push(last.isoCode);
     }
@@ -74,7 +98,11 @@ const addContinentLabels = function (days) {
   let labels = [];
   let last = days[0];
   days.forEach((day) => {
-    if (!(last.country == day.country) && last.continent === "Continent") {
+    if (
+      !(last.country == day.country) &&
+      last.continent === "Continent" &&
+      isContinent(last.country)
+    ) {
       data.continentLabels.push(last.country);
     }
     last = day;
@@ -137,7 +165,7 @@ const createCountryData = function (datos, global, daily) {
   let totalData = [];
 
   datos.forEach((day) => {
-    if (!(day.continent === "Continent")) {
+    if (!(day.continent === "Continent") && !isValidCountry(day.country)) {
       if (!(last.country == day.country)) {
         color = randomColor();
         data.totalCountry.push(
@@ -185,6 +213,87 @@ const createContinentData = function (datos, global, daily) {
   });
 
   data.continentTotal = totalData;
+};
+
+const createCountryBarChartRaceData = function (datos, global) {
+  let last = datos[0];
+  let totalData = [];
+  let inside = new Object();
+
+  datos.forEach((day) => {
+    if (!(day.continent === "Continent")) {
+      if (!(last.country == day.country)) {
+        inside[last.country] = totalData;
+        totalData = [];
+      }
+      totalData.push(day[global]);
+    }
+    last = day;
+  });
+
+  let inside2 = new Object();
+  let array = [];
+  let cont = 0;
+
+  data.labels.forEach((day) => {
+    data.countryLables.forEach((country) => {
+      inside2["country"] = country;
+      try {
+        if (!(inside[country].at(cont) === undefined)) {
+          inside2["total"] = inside[country].at(cont);
+          array.push(inside2);
+          inside2 = new Object();
+        }
+      } catch (e) {
+        inside2["total"] = 0;
+        array.push(inside2);
+        inside2 = new Object();
+      }
+    });
+    cont++;
+    data.countryBarRace[day] = array;
+    array = [];
+  });
+};
+
+const createContinentBarChartRaceData = function (datos, global) {
+  let last = datos[0];
+  let totalData = [];
+  let inside = new Object();
+
+  datos.forEach((day) => {
+    if (day.continent === "Continent" && isContinent(day.country)) {
+      totalData.push(day[global]);
+    } else if (last.continent === "Continent" && isContinent(last.country)) {
+      inside[last.country] = totalData;
+      totalData = [];
+    }
+    last = day;
+  });
+
+  let inside2 = new Object();
+  let array = [];
+  let cont = 0;
+
+  data.labels.forEach((day) => {
+    data.continentLabels.forEach((continent) => {
+      inside2["country"] = continent;
+      try {
+        if (!(inside[continent].at(cont) === undefined)) {
+          inside2["total"] = inside[continent].at(cont);
+          array.push(inside2);
+          inside2 = new Object();
+        }
+      } catch (e) {
+        inside2["total"] = 0;
+        array.push(inside2);
+        inside2 = new Object();
+      }
+    });
+    cont++;
+    data.continentBarRace[day] = array;
+    array = [];
+  });
 };
 
 const addDeathsChartLine = async function (title, data2, selectedChart) {
@@ -289,6 +398,9 @@ const createData = async function (url, global, daily, type, query) {
     );
   } else if (query[1]) {
     createCountryData(dataFetched, global, daily);
+    createCountryBarChartRaceData(dataFetched, global);
+
+    await startRace(data.countryBarRace, data.labels);
 
     await addDeathsChartLine(
       "COVID-19 total world " + type + " by country",
@@ -315,7 +427,8 @@ const createData = async function (url, global, daily, type, query) {
     await addMapChart("COVID-19 total global new world " + type, "mapChart");
   } else if (query[2]) {
     createContinentData(dataFetched, global, daily);
-
+    createContinentBarChartRaceData(dataFetched, global);
+    await startRace(data.continentBarRace, data.labels);
     await addDeathsChartLine(
       "COVID-19 global total world " + type,
       data.totalContinent,
@@ -343,17 +456,20 @@ const createData = async function (url, global, daily, type, query) {
 };
 
 const start = async function () {
-  result = await fetch(
-    "http://localhost:3000/filter" ||
-      "https://laboratorio1basesdedatos.azurewebsites.net/filter"
-  );
+  let url = "https://laboratoriobasesdedatos.azurewebsites.net";
+  try {
+    result = await fetch(url + "/filter");
+  } catch (e) {
+    url = "http://localhost:3000";
+    result = await fetch(url + "/filter");
+  }
+
   dataFetched = await result.json();
   console.log(dataFetched);
 
   if (dataFetched.label === "deaths") {
     await createData(
-      "http://localhost:3000/deaths/data/deathStatics" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/deaths/data/deathStatics",
+      url + "/deaths/data/deathStatics",
       "totalDeaths",
       "newDeaths",
       "deaths",
@@ -361,8 +477,7 @@ const start = async function () {
     );
   } else if (dataFetched.label === "cases") {
     await createData(
-      "http://localhost:3000/cases/data/casesStatics" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/cases/data/casesStatics",
+      url + "/cases/data/casesStatics",
       "totalCases",
       "newCases",
       "cases",
@@ -370,8 +485,7 @@ const start = async function () {
     );
   } else if (dataFetched.label === "tests") {
     await createData(
-      "http://localhost:3000/tests/data/testStatics" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/tests/data/testStatics",
+      url + "/tests/data/testStatics",
       "totalTest",
       "newTest",
       "tests",
@@ -379,8 +493,7 @@ const start = async function () {
     );
   } else if (dataFetched.label === "vaccinations") {
     await createData(
-      "http://localhost:3000/vaccinations/data/vaccinationsStatics" ||
-        "https://laboratorio1basesdedatos.azurewebsites.net/vaccinations/data/vaccinationsStatics",
+      url + "/vaccinations/data/vaccinationsStatics",
       "totalVaccinations",
       "newVaccinations",
       "vaccinations",
