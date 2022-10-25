@@ -2,5 +2,7 @@
     "appService.zipIgnorePattern": [
         "node_modules{,/**}",
         ".vscode{,/**}"
-    ]
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/e52e0696-487c-463d-a670-0a192ea2bdf6/AppServices/subscriptions/e52e0696-487c-463d-a670-0a192ea2bdf6/resourceGroups/laboratorioBasesDeDatos_group/providers/Microsoft.Web/sites/LaboratorioBaseDeDatosV2",
+    "appService.deploySubpath": "."
 }
