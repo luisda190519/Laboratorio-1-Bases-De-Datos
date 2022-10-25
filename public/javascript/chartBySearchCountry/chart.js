@@ -105,7 +105,7 @@ const createData = async function (url, global, daily, type) {
 };
 
 const start = async function () {
-  let url = "https://laboratoriobasesdedatos.azurewebsites.net";
+  let url = "https://laboratoriobasededatosv2.azurewebsites.net";
   try {
     result = await fetch(url + "/filter");
   } catch (e) {
