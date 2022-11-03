@@ -1,6 +1,8 @@
-const btn = document.getElementById('btn-error');
+const btn = document.getElementById("btn-error");
 
-btn.addEventListener('click', () => {
-  btn.style.display = 'none';
-});
+try {
+  btn.addEventListener("click", () => {
+    btn.style.display = "none";
+  });
+} catch (error) {}
 
